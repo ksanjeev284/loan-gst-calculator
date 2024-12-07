@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Calculator, IndianRupee, Clock, Percent } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 export function LoanEMICalculator() {
@@ -64,117 +64,188 @@ export function LoanEMICalculator() {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value)
   }
 
-  const chartData = [
-    { name: 'Principal', value: parseFloat(loanAmount) },
-    { name: 'Total Interest', value: totalInterest || 0 },
-  ]
-
-  const COLORS = ['#0088FE', '#00C49F']
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Loan EMI Calculator</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="loanAmount">Loan Amount</Label>
-            <Input
-              id="loanAmount"
-              type="number"
-              value={loanAmount}
-              onChange={(e) => setLoanAmount(e.target.value)}
-              placeholder="Enter loan amount"
-            />
+    <div className="space-y-6">
+      <Card className="border-2 border-indigo-100 dark:border-[#2a3142] dark:bg-[#1e2536]">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-2xl text-indigo-600 dark:text-indigo-400">
+            <Calculator className="h-6 w-6" />
+            Loan EMI Calculator
+          </CardTitle>
+          <CardDescription className="dark:text-gray-400">Calculate your monthly EMI, total interest, and view detailed amortization schedule</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="loanAmount" className="text-sm font-medium">
+                <div className="flex items-center gap-2">
+                  <IndianRupee className="h-4 w-4 text-gray-500" />
+                  Loan Amount
+                </div>
+              </Label>
+              <Input
+                id="loanAmount"
+                type="number"
+                value={loanAmount}
+                onChange={(e) => setLoanAmount(e.target.value)}
+                placeholder="Enter loan amount"
+                className="border-indigo-100 focus:border-indigo-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="interestRate" className="text-sm font-medium">
+                <div className="flex items-center gap-2">
+                  <Percent className="h-4 w-4 text-gray-500" />
+                  Interest Rate (% p.a.)
+                </div>
+              </Label>
+              <Input
+                id="interestRate"
+                type="number"
+                value={interestRate}
+                onChange={(e) => setInterestRate(e.target.value)}
+                placeholder="Enter interest rate"
+                className="border-indigo-100 focus:border-indigo-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tenure" className="text-sm font-medium">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  Loan Tenure (Years)
+                </div>
+              </Label>
+              <Input
+                id="tenure"
+                type="number"
+                value={tenure}
+                onChange={(e) => setTenure(e.target.value)}
+                placeholder="Enter loan tenure"
+                className="border-indigo-100 focus:border-indigo-500"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="interestRate">Interest Rate (% per annum)</Label>
-            <Input
-              id="interestRate"
-              type="number"
-              value={interestRate}
-              onChange={(e) => setInterestRate(e.target.value)}
-              placeholder="Enter interest rate"
-            />
+
+          <div className="flex justify-center">
+            <Button 
+              onClick={calculateEMI} 
+              className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white w-full md:w-1/3"
+            >
+              Calculate EMI
+            </Button>
           </div>
-          <div>
-            <Label htmlFor="tenure">Tenure (Years)</Label>
-            <Input
-              id="tenure"
-              type="number"
-              value={tenure}
-              onChange={(e) => setTenure(e.target.value)}
-              placeholder="Enter loan tenure in years"
-            />
-          </div>
-          <Button onClick={calculateEMI}>Calculate EMI</Button>
+
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="mt-4 dark:bg-red-900/20">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          {emi !== null && (
-            <div className="mt-4 space-y-4">
-              <div className="space-y-2">
-                <p>Monthly EMI: {formatCurrency(emi)}</p>
-                <p>Total Interest: {formatCurrency(totalInterest!)}</p>
-                <p>Total Payment: {formatCurrency(totalPayment!)}</p>
+
+          {emi && totalInterest && totalPayment && (
+            <div className="mt-6 space-y-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card className="bg-gradient-to-br from-indigo-50 to-white dark:from-[#2a3142] dark:to-[#1e2536] dark:border-[#2a3142]">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Monthly EMI</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {formatCurrency(emi)}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-indigo-50 to-white dark:from-[#2a3142] dark:to-[#1e2536] dark:border-[#2a3142]">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Total Interest</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {formatCurrency(totalInterest)}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-indigo-50 to-white dark:from-[#2a3142] dark:to-[#1e2536] dark:border-[#2a3142]">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm text-gray-600 dark:text-gray-400">Total Payment</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {formatCurrency(totalPayment)}
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={chartData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold mb-2">Amortization Schedule</h3>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Month</TableHead>
-                        <TableHead>EMI</TableHead>
-                        <TableHead>Principal</TableHead>
-                        <TableHead>Interest</TableHead>
-                        <TableHead>Balance</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {amortizationSchedule.map((row) => (
-                        <TableRow key={row.month}>
-                          <TableCell>{row.month}</TableCell>
-                          <TableCell>{formatCurrency(row.emi)}</TableCell>
-                          <TableCell>{formatCurrency(row.principal)}</TableCell>
-                          <TableCell>{formatCurrency(row.interest)}</TableCell>
-                          <TableCell>{formatCurrency(row.balance)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="bg-white dark:bg-[#1e2536] dark:border-[#2a3142]">
+                  <CardHeader>
+                    <CardTitle className="text-lg dark:text-white">Payment Breakdown</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: 'Principal', value: parseFloat(loanAmount) },
+                            { name: 'Total Interest', value: totalInterest }
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          <Cell fill="#4F46E5" />
+                          <Cell fill="#818CF8" />
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white dark:bg-[#1e2536] dark:border-[#2a3142]">
+                  <CardHeader>
+                    <CardTitle className="text-lg dark:text-white">Amortization Schedule</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-[300px] overflow-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="dark:border-[#2a3142]">
+                            <TableHead className="dark:text-gray-400">Month</TableHead>
+                            <TableHead className="dark:text-gray-400">Principal</TableHead>
+                            <TableHead className="dark:text-gray-400">Interest</TableHead>
+                            <TableHead className="dark:text-gray-400">Balance</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {amortizationSchedule.map((row, index) => (
+                            <TableRow key={index} className="dark:border-[#2a3142]">
+                              <TableCell className="dark:text-gray-300">{row.month}</TableCell>
+                              <TableCell className="dark:text-gray-300">{formatCurrency(row.principal)}</TableCell>
+                              <TableCell className="dark:text-gray-300">{formatCurrency(row.interest)}</TableCell>
+                              <TableCell className="dark:text-gray-300">{formatCurrency(row.balance)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
