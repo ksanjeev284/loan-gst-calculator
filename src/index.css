@@ -36,41 +36,67 @@
   }
  
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
+    --background: 224 24% 14%;
+    --foreground: 213 31% 91%;
+
+    --card: 224 24% 14%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 224 24% 14%;
+    --popover-foreground: 213 31% 91%;
+
     --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222 24% 21%;
     --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
+
+    --muted: 222 24% 21%;
+    --muted-foreground: 217.9 32.6% 17.5%;
+
+    --accent: 222 24% 21%;
     --accent-foreground: 210 40% 98%;
- 
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+
+    --border: 222 24% 21%;
+    --input: 222 24% 21%;
+    --ring: 222 24% 21%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+.dark {
+  background-color: #1a1f2e;
+  color: #e5e7eb;
+}
+
+.dark input,
+.dark select {
+  background-color: #1e2536 !important;
+  border-color: #2a3142 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .bg-white {
+  background-color: #1e2536 !important;
+}
+
+.dark footer {
+  background-color: #1a1f2e !important;
+  border-top: 1px solid #2a3142 !important;
+}
+
+.dark .bg-gradient-to-br {
+  background: #1e2536 !important;
 }
